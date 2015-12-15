@@ -1,29 +1,30 @@
 <?php
 
-class CspBootstrapCustomizerOptions extends CspCustomizerOptions
+class WpCscBootstrapCustomizerOptions extends WpCscCustomizerOptions
 {
     
     public function __construct() {
-        add_action('customize_register', array($this, 'csp_customize_bootstrap_register'));
+        add_action('customize_register', array($this, 'csc_customize_bootstrap_register'));
     }
     
-    public function csp_bootstrap_compiler_options() {
+    public function csc_bootstrap_compiler_options() {
         // Get all variables from the customizer
-        $cspColors = get_option('csp_bootstrap_colors', array());
-        $cspFonts = get_option('csp_bootstrap_fonts', array());
+        $csc_colors = get_option('csc_bootstrap_colors', array());
+        $csc_fonts = get_option('csc_bootstrap_fonts', array());
 
-        $sassVariables = array_merge($cspColors, $cspFonts);
-        $sassCompileFile = '@import "bootstrap.scss";';
-        $cssFilePath = plugin_dir_path( __FILE__ ).'../assets/stylesheets/bootstrap.min.css';
+        $sass_vars = array_merge($csc_colors, $csc_fonts);
+        $sass_import_file = '@import "_bootstrap.scss";';
+        $scss_dir = WPCSC_PLUGIN_DIR.'/assets/bootstrap/stylesheets/';
+        $css_file = WPCSC_PLUGIN_DIR.'/assets/bootstrap/stylesheets/bootstrap.min.css';
         
-        $this->run_compiler($sassVariables, $sassCompileFile, $cssFilePath);
+        $this->run_compiler($scss_dir, $css_file, $sass_vars, $sass_import_file);
     }
 
-    public function csp_customize_bootstrap_register($wp_customize){
+    public function csc_customize_bootstrap_register($wp_customize){
         
         $wp_customize->add_panel( 'bootstrap_options_panel', array(
-                'title'       => __('Bootstrap Options', 'csp'),
-                'description' => __('Modify the existing bootstrap colors', 'csp'),
+                'title'       => __('Bootstrap Options', 'csc'),
+                'description' => __('Modify the existing bootstrap colors', 'csc'),
                 'priority'    => 10,
             )
         );
@@ -32,7 +33,7 @@ class CspBootstrapCustomizerOptions extends CspCustomizerOptions
                 'priority' => 10,
                 'capability' => 'edit_theme_options',
                 'theme_supports' => '',
-                'title' => __( 'Bootstrap Colors', 'csp' ),
+                'title' => __( 'Bootstrap Colors', 'csc' ),
                 'description' => '',
                 'panel' => 'bootstrap_options_panel',
             )
@@ -42,7 +43,7 @@ class CspBootstrapCustomizerOptions extends CspCustomizerOptions
                 'priority' => 10,
                 'capability' => 'edit_theme_options',
                 'theme_supports' => '',
-                'title' => __( 'Bootstrap Fonts', 'csp' ),
+                'title' => __( 'Bootstrap Fonts', 'csc' ),
                 'description' => '',
                 'panel' => 'bootstrap_options_panel',
             )
@@ -50,53 +51,53 @@ class CspBootstrapCustomizerOptions extends CspCustomizerOptions
 
         $colors = array();
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[body-bg]', 
+            'slug'      =>'csc_bootstrap_colors[body-bg]', 
             'default'   => '#ffffff',
             'label'     => 'Background Color',
-            'description' => __( 'The main body background color.', 'csp' ),
+            'description' => __( 'The main body background color.', 'csc' ),
         );
 
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[text-color]', 
+            'slug'      =>'csc_bootstrap_colors[text-color]', 
             'default'   => '#333333',
             'label'     => 'Content Text Color',
-            'description' => __( 'The main text color for your content.', 'csp' ),
+            'description' => __( 'The main text color for your content.', 'csc' ),
         );
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[link-color]', 
+            'slug'      =>'csc_bootstrap_colors[link-color]', 
             'default'   => '#337ab7',
             'label'     => 'Content Link Color',
-            'description' => __( 'The text color for all your links.  This is typically the same color as Brand Primary.', 'csp' ),
+            'description' => __( 'The text color for all your links.  This is typically the same color as Brand Primary.', 'csc' ),
         );
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[brand-primary]', 
+            'slug'      =>'csc_bootstrap_colors[brand-primary]', 
             'default'   => '#337ab7',
             'label'     => 'Brand Primary Color',
-            'description' => __( 'Primary color for any buttons, labels, and headings you may have.', 'csp' ),
+            'description' => __( 'Primary color for any buttons, labels, and headings you may have.', 'csc' ),
         );
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[brand-success]', 
+            'slug'      =>'csc_bootstrap_colors[brand-success]', 
             'default'   => '#5cb85c',
             'label'     => 'Success Color',
-            'description' => __( 'The color for any success labels, buttons or alerts.', 'csp' ),
+            'description' => __( 'The color for any success labels, buttons or alerts.', 'csc' ),
         );
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[brand-info]', 
+            'slug'      =>'csc_bootstrap_colors[brand-info]', 
             'default'   => '#46b8da',
             'label'     => 'Info Button Color',
-            'description' => __( 'The color for any info labels, buttons or alerts.', 'csp' ),
+            'description' => __( 'The color for any info labels, buttons or alerts.', 'csc' ),
         );
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[brand-warning]', 
+            'slug'      =>'csc_bootstrap_colors[brand-warning]', 
             'default'   => '#f0ad4e',
             'label'     => 'Warning Button Color',
-            'description' => __( 'The color for any warning labels, buttons or alerts.', 'csp' ),
+            'description' => __( 'The color for any warning labels, buttons or alerts.', 'csc' ),
         );
         $colors[] = array(
-            'slug'      =>'csp_bootstrap_colors[brand-danger]', 
+            'slug'      =>'csc_bootstrap_colors[brand-danger]', 
             'default'   => '#d9534f',
             'label'     => 'Danger Button Color',
-            'description' => __( 'The color for any danger labels, buttons or alerts.', 'csp' ),
+            'description' => __( 'The color for any danger labels, buttons or alerts.', 'csc' ),
         );
         foreach( $colors as $color ) {
             // SETTINGS
@@ -126,10 +127,10 @@ class CspBootstrapCustomizerOptions extends CspCustomizerOptions
 
         $fonts = array();
         $fonts[] = array(
-            'slug'      =>'csp_bootstrap_fonts[font-size-base]', 
+            'slug'      =>'csc_bootstrap_fonts[font-size-base]', 
             'default'   => '14px',
             'label'     => 'Base font size',
-            'description' => __( 'The base font size for the site.', 'csp' ),
+            'description' => __( 'The base font size for the site.', 'csc' ),
         );
         foreach( $fonts as $font ) {
             // SETTINGS
@@ -159,7 +160,7 @@ class CspBootstrapCustomizerOptions extends CspCustomizerOptions
         $color = sanitize_hex_color($color);
 
         if(!empty($color)) {
-           add_action('customize_save_after', array( $this, 'csp_bootstrap_compiler_options'));
+           add_action('customize_save_after', array( $this, 'csc_bootstrap_compiler_options'));
         }
 
         return $color;
@@ -170,7 +171,7 @@ class CspBootstrapCustomizerOptions extends CspCustomizerOptions
         //$fonts = sanitize_hex_color($fonts);
 
         if(!empty($fonts)) {
-           add_action('customize_save_after', array( $this, 'csp_bootstrap_compiler_options'));
+           add_action('customize_save_after', array( $this, 'csc_bootstrap_compiler_options'));
         }
 
         return $fonts;
@@ -178,16 +179,19 @@ class CspBootstrapCustomizerOptions extends CspCustomizerOptions
     
 }
 
-add_action( 'init' , 'csp_customizer_bootstrap_init' );
+add_action( 'init' , 'csc_customizer_bootstrap_init' );
 
-function csp_customizer_bootstrap_init() {
-    $csp_customizer_bootstrap_options = new CspBootstrapCustomizerOptions();
+function csc_customizer_bootstrap_init() {
+    $csc_customizer_bootstrap_options = new WpCscBootstrapCustomizerOptions();
     
-    wp_register_script('csp_bootstrapjs', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array('jquery'),'3.3.5', true );
-    wp_register_style('csp_bootstrapcss', plugin_dir_url( __FILE__ ).'../assets/stylesheets/bootstrap.min.css',false,'3.3.6','all');    
+    // Don't enqueue on admin pages
+    if(!is_admin()) {
+        wp_register_script('csc_bootstrapjs', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array('jquery'),'3.3.5', true );
+        wp_register_style('csc_bootstrapcss', WPCSC_PLUGIN_URL.'/assets/bootstrap/stylesheets/bootstrap.min.css',false,'3.3.6','all');    
 
-    wp_enqueue_script('csp_bootstrapjs');
-    wp_enqueue_style('csp_bootstrapcss');
+        wp_enqueue_script('csc_bootstrapjs');
+        wp_enqueue_style('csc_bootstrapcss');
+    }
 }
 
 ?>
