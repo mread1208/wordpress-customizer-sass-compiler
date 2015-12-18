@@ -45,7 +45,7 @@ class WpCscSettingsPage
                 <br/>
                 <span class="author">By: <a href="http://michaelcread.com" target="_blank">Michael Read</a></span>
                 <br/>
-                <span class="repo">Help & Issues: <a href="https://github.com/mread1208/wordpress-customizer-sass-compiler" target="_blank">Github</a></span>
+                <span class="repo">Help &amp; Issues: <a href="https://github.com/mread1208/wordpress-customizer-sass-compiler" target="_blank">Github</a></span>
             </p>
             <form method="post" action="options.php">
             <?php
@@ -151,8 +151,21 @@ class WpCscSettingsPage
     
     public function bootstrap_options_callback() { 
         $this->options = get_option('csc_bootstrap_options');
-        $html = "body-bg <input type='checkbox' name='csc_bootstrap_options[color-variables][]' ".checked( 'body-bg', isset($this->options['color-variables']) && in_array('body-bg', $this->options['color-variables']) ? 'body-bg' : '', false )." value='body-bg' />";
-        $html .= 'text-color <input type="checkbox" name="csc_bootstrap_options[color-variables][]" '.checked( 'text-color', isset($this->options['color-variables']) && in_array('body-bg', $this->options['color-variables']) ? 'text-color' : '', false ).' value="text-color" />';
+        $default_bs_colors = array('body-bg', 'text-color', 'link-color', 'brand-primary', 'brand-success', 'brand-info', 'brand-warning', 'brand-danger');
+        $default_bs_fonts = array('font-size-base');
+        
+        $html = '';
+        
+        // Colors
+        foreach($default_bs_colors as $default_bs_color) {
+            $html .= '<input type="checkbox" name="csc_bootstrap_options[color-variables][]" '.checked( $default_bs_color, isset($this->options['color-variables']) && in_array($default_bs_color, $this->options['color-variables']) ? $default_bs_color : '', false ).' value="'.$default_bs_color.'" /> '.$default_bs_color.'<br />';
+        }
+        
+        // Fonts
+        foreach($default_bs_fonts as $default_bs_font) {
+            $html .= '<input type="checkbox" name="csc_bootstrap_options[font-variables][]" '.checked( $default_bs_font, isset($this->options['font-variables']) && in_array($default_bs_font, $this->options['font-variables']) ? $default_bs_font : '', false ).' value="'.$default_bs_font.'" /> '.$default_bs_font.'<br />';
+        }
+        
         echo $html;
     }
     

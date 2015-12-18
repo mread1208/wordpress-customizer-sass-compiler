@@ -22,136 +22,178 @@ class WpCscBootstrapCustomizerOptions extends WpCscCustomizerOptions
 
     public function csc_customize_bootstrap_register($wp_customize){
         
-        $wp_customize->add_panel( 'bootstrap_options_panel', array(
-                'title'       => __('Bootstrap Options', 'csc'),
-                'description' => __('Modify the existing bootstrap colors', 'csc'),
-                'priority'    => 10,
-            )
-        );
-
-        $wp_customize->add_section( 'bootstrap_colors_section', array(
-                'priority' => 10,
-                'capability' => 'edit_theme_options',
-                'theme_supports' => '',
-                'title' => __( 'Bootstrap Colors', 'csc' ),
-                'description' => '',
-                'panel' => 'bootstrap_options_panel',
-            )
-        );
-
-        $wp_customize->add_section( 'bootstrap_fonts_section', array(
-                'priority' => 10,
-                'capability' => 'edit_theme_options',
-                'theme_supports' => '',
-                'title' => __( 'Bootstrap Fonts', 'csc' ),
-                'description' => '',
-                'panel' => 'bootstrap_options_panel',
-            )
-        );
-
-        $colors = array();
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[body-bg]', 
-            'default'   => '#ffffff',
-            'label'     => 'Background Color',
-            'description' => __( 'The main body background color.', 'csc' ),
-        );
-
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[text-color]', 
-            'default'   => '#333333',
-            'label'     => 'Content Text Color',
-            'description' => __( 'The main text color for your content.', 'csc' ),
-        );
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[link-color]', 
-            'default'   => '#337ab7',
-            'label'     => 'Content Link Color',
-            'description' => __( 'The text color for all your links.  This is typically the same color as Brand Primary.', 'csc' ),
-        );
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[brand-primary]', 
-            'default'   => '#337ab7',
-            'label'     => 'Brand Primary Color',
-            'description' => __( 'Primary color for any buttons, labels, and headings you may have.', 'csc' ),
-        );
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[brand-success]', 
-            'default'   => '#5cb85c',
-            'label'     => 'Success Color',
-            'description' => __( 'The color for any success labels, buttons or alerts.', 'csc' ),
-        );
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[brand-info]', 
-            'default'   => '#46b8da',
-            'label'     => 'Info Button Color',
-            'description' => __( 'The color for any info labels, buttons or alerts.', 'csc' ),
-        );
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[brand-warning]', 
-            'default'   => '#f0ad4e',
-            'label'     => 'Warning Button Color',
-            'description' => __( 'The color for any warning labels, buttons or alerts.', 'csc' ),
-        );
-        $colors[] = array(
-            'slug'      =>'csc_bootstrap_colors[brand-danger]', 
-            'default'   => '#d9534f',
-            'label'     => 'Danger Button Color',
-            'description' => __( 'The color for any danger labels, buttons or alerts.', 'csc' ),
-        );
-        foreach( $colors as $color ) {
-            // SETTINGS
-            $wp_customize->add_setting(
-                $color['slug'], array(
-                    'default' => $color['default'],
-                    'type' => 'option', 
-                    'capability' => 'edit_theme_options',
-                    'transport' => 'postMessage',
-                    'sanitize_callback' => array($this, 'check_compile_bootstrap_color')
+        $csc_bs_options = get_option('csc_bootstrap_options', array());
+        
+        if(!empty($csc_bs_options)) {
+        
+            $wp_customize->add_panel( 'bootstrap_options_panel', array(
+                    'title'       => __('Bootstrap Options', 'csc'),
+                    'description' => __('Modify the existing bootstrap colors', 'csc'),
+                    'priority'    => 10,
                 )
             );
-            // CONTROLS
-            $wp_customize->add_control(
-                new WP_Customize_Color_Control(
-                    $wp_customize,
-                    $color['slug'], 
-                    array(
-                        'label' => $color['label'], 
-                        'section' => 'bootstrap_colors_section',
-                        'settings' => $color['slug'],
-                        'description' => $color['description']
+            
+            $csc_colors = (isset($csc_bs_options['color-variables']) ? $csc_bs_options['color-variables'] : array());
+            $csc_fonts = (isset($csc_bs_options['font-variables']) ? $csc_bs_options['font-variables'] : array());
+                
+            if(!empty($csc_colors)) {
+                
+                $wp_customize->add_section( 'bootstrap_colors_section', array(
+                        'priority' => 10,
+                        'capability' => 'edit_theme_options',
+                        'theme_supports' => '',
+                        'title' => __( 'Bootstrap Colors', 'csc' ),
+                        'description' => '',
+                        'panel' => 'bootstrap_options_panel',
                     )
-                )
-            );
-        }
+                );
+                
+                $colors = array();
 
-        $fonts = array();
-        $fonts[] = array(
-            'slug'      =>'csc_bootstrap_fonts[font-size-base]', 
-            'default'   => '14px',
-            'label'     => 'Base font size',
-            'description' => __( 'The base font size for the site.', 'csc' ),
-        );
-        foreach( $fonts as $font ) {
-            // SETTINGS
-            $wp_customize->add_setting(
-                $font['slug'], array(
-                    'default' => $font['default'],
-                    'type' => 'option', 
-                    'capability' => 'edit_theme_options',
-                    'transport' => 'postMessage',
-                    'sanitize_callback' => array($this, 'check_compile_bootstrap_fonts')
-                )
-            );
-            // CONTROLS
-            $wp_customize->add_control(
-                $font['slug'], array(
-                    'label' => $font['label'], 
-                    'section' => 'bootstrap_fonts_section',
-                    'settings' => $font['slug'],
-                    'description' => $font['description']
-                )
-            );
+                if(in_array('body-bg', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[body-bg]', 
+                        'default'   => '#ffffff',
+                        'label'     => 'Background Color',
+                        'description' => __( 'The main body background color.', 'csc' ),
+                    );
+                }
+
+                if(in_array ('text-color', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[text-color]', 
+                        'default'   => '#333333',
+                        'label'     => 'Content Text Color',
+                        'description' => __( 'The main text color for your content.', 'csc' ),
+                    );
+                }
+
+                if(in_array ('link-color', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[link-color]', 
+                        'default'   => '#337ab7',
+                        'label'     => 'Content Link Color',
+                        'description' => __( 'The text color for all your links.  This is typically the same color as Brand Primary.', 'csc' ),
+                    );
+                }
+
+                if(in_array ('brand-primary', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[brand-primary]', 
+                        'default'   => '#337ab7',
+                        'label'     => 'Brand Primary Color',
+                        'description' => __( 'Primary color for any buttons, labels, and headings you may have.', 'csc' ),
+                    );
+                }
+
+                if(in_array ('brand-success', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[brand-success]', 
+                        'default'   => '#5cb85c',
+                        'label'     => 'Success Color',
+                        'description' => __( 'The color for any success labels, buttons or alerts.', 'csc' ),
+                    );
+                }
+
+                if(in_array ('brand-info', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[brand-info]', 
+                        'default'   => '#46b8da',
+                        'label'     => 'Info Button Color',
+                        'description' => __( 'The color for any info labels, buttons or alerts.', 'csc' ),
+                    );
+                }
+
+                if(in_array ('brand-warning', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[brand-warning]', 
+                        'default'   => '#f0ad4e',
+                        'label'     => 'Warning Button Color',
+                        'description' => __( 'The color for any warning labels, buttons or alerts.', 'csc' ),
+                    );
+                }
+
+                if(in_array ('brand-danger', $csc_colors)) {
+                    $colors[] = array(
+                        'slug'      =>'csc_bootstrap_colors[brand-danger]', 
+                        'default'   => '#d9534f',
+                        'label'     => 'Danger Button Color',
+                        'description' => __( 'The color for any danger labels, buttons or alerts.', 'csc' ),
+                    );
+                }
+
+                foreach( $colors as $color ) {
+                    // SETTINGS
+                    $wp_customize->add_setting(
+                        $color['slug'], array(
+                            'default' => $color['default'],
+                            'type' => 'option', 
+                            'capability' => 'edit_theme_options',
+                            'transport' => 'postMessage',
+                            'sanitize_callback' => array($this, 'check_compile_bootstrap_color')
+                        )
+                    );
+                    // CONTROLS
+                    $wp_customize->add_control(
+                        new WP_Customize_Color_Control(
+                            $wp_customize,
+                            $color['slug'], 
+                            array(
+                                'label' => $color['label'], 
+                                'section' => 'bootstrap_colors_section',
+                                'settings' => $color['slug'],
+                                'description' => $color['description']
+                            )
+                        )
+                    );
+                }
+            }
+            
+            if(!empty($csc_fonts)) {
+                $wp_customize->add_section( 'bootstrap_fonts_section', array(
+                        'priority' => 10,
+                        'capability' => 'edit_theme_options',
+                        'theme_supports' => '',
+                        'title' => __( 'Bootstrap Fonts', 'csc' ),
+                        'description' => '',
+                        'panel' => 'bootstrap_options_panel',
+                    )
+                );
+
+                $fonts = array();
+                
+                if(in_array('font-size-base', $csc_fonts)) {
+                    $fonts[] = array(
+                        'slug'      =>'csc_bootstrap_fonts[font-size-base]', 
+                        'default'   => '14px',
+                        'label'     => 'Base font size',
+                        'description' => __( 'The base font size for the site.', 'csc' ),
+                    );
+                }
+                
+                foreach( $fonts as $font ) {
+                    // SETTINGS
+                    $wp_customize->add_setting(
+                        $font['slug'], array(
+                            'default' => $font['default'],
+                            'type' => 'option', 
+                            'capability' => 'edit_theme_options',
+                            'transport' => 'postMessage',
+                            'sanitize_callback' => array($this, 'check_compile_bootstrap_fonts')
+                        )
+                    );
+                    // CONTROLS
+                    $wp_customize->add_control(
+                        $font['slug'], array(
+                            'label' => $font['label'], 
+                            'section' => 'bootstrap_fonts_section',
+                            'settings' => $font['slug'],
+                            'description' => $font['description']
+                        )
+                    );
+                }
+            }
+            
         }
     }
 
