@@ -86,6 +86,14 @@ class WpCscSettingsPage
             'csc_styles_include_id' // Section           
         );
         
+        add_settings_field(
+            'custom', // ID
+            'Include Custom Options', // Title 
+            array( $this, 'custom_callback' ), // Callback
+            'csc-plugin-settings', // Page
+            'csc_styles_include_id' // Section           
+        );
+        
         $this->options = get_option('csc_styles_include');
         
         if(isset($this->options) && $this->options['bootstrap']) {
@@ -111,6 +119,30 @@ class WpCscSettingsPage
                 'csc_bootstrap_options_id' // Section           
             );
         }
+        
+        if(isset($this->options['custom']) && $this->options['custom']) {
+        
+            register_setting(
+                'csc_custom_options_group', // Option group
+                'csc_custom_options', // Option name
+                array( $this, 'sanitize' ) // Sanitize
+            );
+
+            add_settings_section(
+                'csc_custom_options_id', // ID
+                'Custom SASS Variables to include', // Title
+                array( $this, 'csc_custom_options_info' ), // Callback
+                'csc-plugin-settings' // Page
+            );  
+
+            add_settings_field(
+                'custom', // ID
+                'Custom Variables to include', // Title 
+                array( $this, 'bootstrap_options_callback' ), // Callback
+                'csc-plugin-settings', // Page
+                'csc_custom_options_id' // Section           
+            );
+        }
     }
 
     /**
@@ -123,6 +155,8 @@ class WpCscSettingsPage
         $new_input = array();
         if( isset( $input['bootstrap'] ) )
             $new_input['bootstrap'] = absint( $input['bootstrap'] );
+        if( isset( $input['custom'] ) )
+            $new_input['custom'] = absint( $input['custom'] );
         if( isset( $input['csc_bootstrap_options'] ) )
             $new_input['csc_bootstrap_options'] = $input['csc_bootstrap_options'];
         return $input;
@@ -138,17 +172,31 @@ class WpCscSettingsPage
     public function csc_bootstrap_options_info() {
         print 'Choose which Bootstrap variables you would like to include / exclude.';
     }
+    
+    public function csc_custom_options_info() {
+        print 'Add custom SASS variables to the theme customizer.';
+    }
 
     /** 
      * Get the settings option array and print one of its values
      */
+    
+    // Library Includes
     public function bootstrap_callback() { 
         $this->options = get_option('csc_styles_include');
         $html = "<input type='radio' name='csc_styles_include[bootstrap]' ".checked($this->options['bootstrap'], 1, false)." value='1' /> Yes ";
-        $html .= '<input type="radio" name="csc_styles_include[bootstrap]"'.checked(isset($this->options['bootstrap']) ? $this->options['bootstrap'] : '', 0, false).'value="0" /> No ';
+        $html .= '<input type="radio" name="csc_styles_include[bootstrap]"'.checked(isset($this->options['bootstrap']) ? $this->options['bootstrap'] : '', 0, false).' value="0" /> No ';
         echo $html;
     }
     
+    public function custom_callback() {
+        $this->options = get_option('csc_styles_include');
+        $html = "<input type='radio' name='csc_styles_include[custom]' ".checked($this->options['custom'], 1, false)." value='1' /> Yes ";
+        $html .= '<input type="radio" name="csc_styles_include[custom]"'.checked(isset($this->options['custom']) ? $this->options['custom'] : '', 0, false).' value="0" /> No ';
+        echo $html;
+    }
+    
+    //Library Options
     public function bootstrap_options_callback() { 
         $this->options = get_option('csc_bootstrap_options');
         $default_bs_colors = array('body-bg', 'text-color', 'link-color', 'brand-primary', 'brand-success', 'brand-info', 'brand-warning', 'brand-danger');
