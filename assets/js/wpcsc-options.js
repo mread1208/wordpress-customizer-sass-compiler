@@ -15,7 +15,6 @@ jQuery(document).ready(function() {
     jQuery('body').on('click', '.wpcsc-js-remove-repeater-field', function(e){
         e.preventDefault();
         var wrapper = jQuery(this).parents('.wpcsc-multifield-wrapper').find('.wpcsc-multifields');
-        if (jQuery('.wpcsc-multi-field', wrapper).length > 1)
-            jQuery(this).parent('.wpcsc-multi-field').remove();
+        jQuery(this).parent('.wpcsc-multi-field').remove();
     });
 });

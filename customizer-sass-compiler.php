@@ -53,11 +53,12 @@ add_option(WPCSC_VERSION_KEY, WPCSC_VERSION_NUM);
 include_once WPCSC_PLUGIN_DIR . '/scssphp/scss.inc.php'; // Sass Compiler
 include_once WPCSC_PLUGIN_DIR . '/classes/class-customizer-options.php'; // Class for customizer options
 
-$styleIncludeOptions = get_option('csp_styles_include', '');
+$styleIncludeOptions = get_option('csc_styles_include', '');
+
 if($styleIncludeOptions != '') {
     foreach ($styleIncludeOptions as $key => $value) {
-        if($value){
-            include('classes/class-customizer-options-'.$key.'.php');
+        if($value && $key != 'custom'){
+            include(WPCSC_PLUGIN_DIR . '/classes/class-customizer-options-'.$key.'.php');
         }
     }
 }
@@ -74,7 +75,6 @@ include_once WPCSC_PLUGIN_DIR . '/customizer-sass-options.php'; // Options page 
 
 if(is_admin()) {
     $wpcsc_settings_page = new WpCscSettingsPage();
-    add_action('admin_enqueue_scripts', 'wpcsc_enqueue_scripts', 50);
 }
 
 add_filter('plugin_action_links', 'wpcsc_plugin_action_links', 10, 2);
@@ -91,8 +91,10 @@ function wpcsc_plugin_action_links($links, $file) {
     return $links;
 }
 
+add_action('admin_enqueue_scripts', 'wpcsc_enqueue_scripts', 50);
+
 function wpcsc_enqueue_scripts() {
-    wp_register_script('wpscs-options', WP_PLUGIN_URL .'/wordpress-customizer-sass-compiler/assets/js/wpcsc-options.js', array('jquery'));
+    wp_register_script('wpscs-options', WPCSC_PLUGIN_URL .'/assets/js/wpcsc-options.js', array('jquery'));
     wp_enqueue_script('wpscs-options');
 }
 

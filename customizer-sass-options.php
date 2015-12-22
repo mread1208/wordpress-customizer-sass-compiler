@@ -50,9 +50,7 @@ class WpCscSettingsPage
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
-                //settings_fields('csc_styles_include_group');
-                settings_fields('csc_bootstrap_options_group');
-                //settings_fields('csc_custom_options_group' );
+                settings_fields('csc_styles_include_group');
                 do_settings_sections('csc-plugin-settings');
                 submit_button(); 
             ?>
@@ -100,7 +98,7 @@ class WpCscSettingsPage
         if(isset($this->options) && $this->options['bootstrap']) {
         
             register_setting(
-                'csc_bootstrap_options_group', // Option group
+                'csc_styles_include_group', // Option group
                 'csc_bootstrap_options', // Option name
                 array( $this, 'sanitize' ) // Sanitize
             );
@@ -124,7 +122,7 @@ class WpCscSettingsPage
         if(isset($this->options['custom']) && $this->options['custom']) {
         
             register_setting(
-                'csc_custom_options_group', // Option group
+                'csc_styles_include_group', // Option group
                 'csc_custom_options', // Option name
                 array( $this, 'sanitize' ) // Sanitize
             );
@@ -154,11 +152,13 @@ class WpCscSettingsPage
     public function sanitize( $input )
     {
         $new_input = array();
-        if( isset( $input['bootstrap'] ) )
+        if( isset( $input['bootstrap'] ) ) {
             $new_input['bootstrap'] = absint( $input['bootstrap'] );
-        if( isset( $input['custom'] ) )
+        } else if( isset( $input['custom'] ) ) {
             $new_input['custom'] = absint( $input['custom'] );
-        
+        } else { 
+            $new_input[] = $input;
+        }
         return $input;
     }
 
@@ -170,7 +170,7 @@ class WpCscSettingsPage
     }
     
     public function csc_bootstrap_options_info() {
-        print 'Choose which Bootstrap variables you would like to include / exclude.';
+        print 'Choose which Bootstrap variables you would like to include / exclude. These options will appear in your theme customizer under the "Bootstrap Options" panel';
     }
     
     public function csc_custom_options_info() {
@@ -191,7 +191,7 @@ class WpCscSettingsPage
     
     public function custom_callback() {
         $this->options = get_option('csc_styles_include');
-        $html = "<input type='radio' name='csc_styles_include[custom]' ".checked($this->options['custom'], 1, false)." value='1' /> Yes ";
+        $html = "<input type='radio' name='csc_styles_include[custom]' ".checked(isset($this->options['custom']) ? $this->options['custom'] : '', 1, false)." value='1' /> Yes ";
         $html .= '<input type="radio" name="csc_styles_include[custom]"'.checked(isset($this->options['custom']) ? $this->options['custom'] : '', 0, false).' value="0" /> No ';
         echo $html;
     }
@@ -229,14 +229,8 @@ class WpCscSettingsPage
                     <a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
                 </div>';
             }
-        } else {
-            $html .= '<div class="wpcsc-multi-field">
-                <input type="text" name="csc_custom_options[sass-variables][0][key]" value="" placeholder="Sass Variable" />
-                <input type="text" name="csc_custom_options[sass-variables][0][value]" value="" placeholder="Default Value" />
-                <a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
-            </div>';
         }
-        $html .= '</div><a href="#" class="button wpcsc-js-add-repeater-field">Add</a></div>';
+        $html .= '</div><a href="#" class="button wpcsc-js-add-repeater-field">Add New Sass Variable</a></div>';
         echo $html;
     }
     
