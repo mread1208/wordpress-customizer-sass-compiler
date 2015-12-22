@@ -74,6 +74,7 @@ include_once WPCSC_PLUGIN_DIR . '/customizer-sass-options.php'; // Options page 
 
 if(is_admin()) {
     $wpcsc_settings_page = new WpCscSettingsPage();
+    add_action('admin_enqueue_scripts', 'wpcsc_enqueue_scripts', 50);
 }
 
 add_filter('plugin_action_links', 'wpcsc_plugin_action_links', 10, 2);
@@ -88,6 +89,11 @@ function wpcsc_plugin_action_links($links, $file) {
         array_unshift($links, $settings_link);
     }
     return $links;
+}
+
+function wpcsc_enqueue_scripts() {
+    wp_register_script('wpscs-options', WP_PLUGIN_URL .'/wordpress-customizer-sass-compiler/assets/js/wpcsc-options.js', array('jquery'));
+    wp_enqueue_script('wpscs-options');
 }
 
 ?>

@@ -50,9 +50,10 @@ class WpCscSettingsPage
             <form method="post" action="options.php">
             <?php
                 // This prints out all hidden setting fields
-                settings_fields( 'csc_styles_include_group' );
-                settings_fields( 'csc_bootstrap_options_group' );
-                do_settings_sections( 'csc-plugin-settings' );
+                //settings_fields('csc_styles_include_group');
+                settings_fields('csc_bootstrap_options_group');
+                //settings_fields('csc_custom_options_group' );
+                do_settings_sections('csc-plugin-settings');
                 submit_button(); 
             ?>
             </form>
@@ -138,7 +139,7 @@ class WpCscSettingsPage
             add_settings_field(
                 'custom', // ID
                 'Custom Variables to include', // Title 
-                array( $this, 'bootstrap_options_callback' ), // Callback
+                array( $this, 'custom_options_callback' ), // Callback
                 'csc-plugin-settings', // Page
                 'csc_custom_options_id' // Section           
             );
@@ -157,8 +158,7 @@ class WpCscSettingsPage
             $new_input['bootstrap'] = absint( $input['bootstrap'] );
         if( isset( $input['custom'] ) )
             $new_input['custom'] = absint( $input['custom'] );
-        if( isset( $input['csc_bootstrap_options'] ) )
-            $new_input['csc_bootstrap_options'] = $input['csc_bootstrap_options'];
+        
         return $input;
     }
 
@@ -214,6 +214,29 @@ class WpCscSettingsPage
             $html .= '<input type="checkbox" name="csc_bootstrap_options[font-variables][]" '.checked( $default_bs_font, isset($this->options['font-variables']) && in_array($default_bs_font, $this->options['font-variables']) ? $default_bs_font : '', false ).' value="'.$default_bs_font.'" /> '.$default_bs_font.'<br />';
         }
         
+        echo $html;
+    }
+    
+    public function custom_options_callback() { 
+        $this->options = get_option('csc_custom_options');
+        
+        $html = '<div class="wpcsc-multifield-wrapper"><div class="wpcsc-multifields">';
+        if(!empty($this->options['sass-variables'])){
+            for($i = 0; $i < count($this->options['sass-variables']); ++$i) {
+                $html .= '<div class="wpcsc-multi-field">
+                    <input type="text" name="csc_custom_options[sass-variables]['.$i.'][key]" value="'.$this->options['sass-variables'][$i]['key'].'" placeholder="Sass Variable" required="required" />
+                    <input type="text" name="csc_custom_options[sass-variables]['.$i.'][value]" value="'.$this->options['sass-variables'][$i]['value'].'" placeholder="Default Value" required="required" />
+                    <a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
+                </div>';
+            }
+        } else {
+            $html .= '<div class="wpcsc-multi-field">
+                <input type="text" name="csc_custom_options[sass-variables][0][key]" value="" placeholder="Sass Variable" />
+                <input type="text" name="csc_custom_options[sass-variables][0][value]" value="" placeholder="Default Value" />
+                <a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
+            </div>';
+        }
+        $html .= '</div><a href="#" class="button wpcsc-js-add-repeater-field">Add</a></div>';
         echo $html;
     }
     
