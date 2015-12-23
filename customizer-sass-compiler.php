@@ -58,9 +58,7 @@ $styleIncludeOptions = get_option('wpcsc1208_option_settings', '');
 
 if(!empty($styleIncludeOptions['wpcsc_styles_include'])) {
     foreach ($styleIncludeOptions['wpcsc_styles_include'] as $key => $value) {
-        if($value && $key != 'custom'){
-            include(WPCSC_PLUGIN_DIR . '/classes/class-customizer-options-'.$key.'.php');
-        }
+        include(WPCSC_PLUGIN_DIR . '/classes/class-customizer-options-'.$key.'.php');
     }
 }
 

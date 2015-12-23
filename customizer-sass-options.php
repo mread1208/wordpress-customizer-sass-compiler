@@ -56,10 +56,14 @@ class WpCscSettingsPage
                 <input type="hidden" name="wpcsc1208_option_settings[wpcscs_version]" value="<?= WPCSC_VERSION_NUM; ?>" />
                 <?php submit_button();  ?>
             </form>
-            <?php /* echo '<pre>';
+            <p>wpcsc1208_option_settings</p>
+            <?php echo '<pre>';
             print_r(get_option('wpcsc1208_option_settings'));
+            echo '</pre>';  ?>
+            <p>wpcsc1208_customizer_settings</p>
+            <?php echo '<pre>';
             print_r(get_option('wpcsc1208_customizer_settings'));
-            echo '</pre>'; */ ?>
+            echo '</pre>'; ?>
         </div>
         <?php
     }
