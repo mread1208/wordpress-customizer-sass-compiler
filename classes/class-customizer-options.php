@@ -36,7 +36,7 @@ class WpCscCustomizerOptions {
         } else {
             $errors = array(
                 'file' => 'CSS Directory',
-                'message' => "File Permissions Error, permission denied. Please make the plugin CSS directory writable."
+                'message' => __("File Permissions Error, permission denied. Please make the plugin CSS directory writable.", 'wpcsc1208')
             );
             array_push($this->compile_errors, $errors);
         }

@@ -28,14 +28,15 @@ if (!defined('WPCSC_PLUGIN_URL'))
     define('WPCSC_PLUGIN_URL', WP_PLUGIN_URL . '/' . WPCSC_PLUGIN_NAME);
 
 // Plugin Version
-if (!defined('WPCSC_VERSION_KEY'))
-    define('WPCSC_VERSION_KEY', 'wpcsc_version');
-
 if (!defined('WPCSC_VERSION_NUM'))
     define('WPCSC_VERSION_NUM', '1.0.0');
 
-// Add version to options table
-add_option(WPCSC_VERSION_KEY, WPCSC_VERSION_NUM);
+$wpcscs1208Version = array('wpcscs_version' => WPCSC_VERSION_NUM);
+
+// Creates row in DB for all our options page settings
+add_option('wpcsc1208_option_settings', $wpcscs1208Version);
+// Creates row in DB for all our customizer page settings
+add_option('wpcsc1208_customizer_settings');
 
 
 /*
@@ -53,10 +54,10 @@ add_option(WPCSC_VERSION_KEY, WPCSC_VERSION_NUM);
 include_once WPCSC_PLUGIN_DIR . '/scssphp/scss.inc.php'; // Sass Compiler
 include_once WPCSC_PLUGIN_DIR . '/classes/class-customizer-options.php'; // Class for customizer options
 
-$styleIncludeOptions = get_option('csc_styles_include', '');
+$styleIncludeOptions = get_option('wpcsc1208_option_settings', '');
 
-if($styleIncludeOptions != '') {
-    foreach ($styleIncludeOptions as $key => $value) {
+if(!empty($styleIncludeOptions['wpcsc_styles_include'])) {
+    foreach ($styleIncludeOptions['wpcsc_styles_include'] as $key => $value) {
         if($value && $key != 'custom'){
             include(WPCSC_PLUGIN_DIR . '/classes/class-customizer-options-'.$key.'.php');
         }
