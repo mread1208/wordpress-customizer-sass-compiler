@@ -6,7 +6,10 @@
     margin: 0;
 }
 
-.wpcsc-multifields thead th,
+.wpcsc-multifields thead th {
+    padding: 5px 10px 10px 10px;
+}
+
 .wpcsc-multifields thead td,
 .wpcsc-multifields tfoot td {
     padding: 10px;
@@ -14,4 +17,9 @@
 
 .wpcsc-multifields tbody td {
     padding: 5px 10px;
+}
+
+.wpcsc-invalid-input {
+    border: 1px solid #ff0000 !important;
+    color: #ff0000 !important;
 }

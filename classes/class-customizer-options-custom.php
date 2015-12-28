@@ -12,13 +12,20 @@ class WpCscCustomCustomizerOptions extends WpCscCustomizerOptions
     public function csc_custom_compiler_options() {
         // Get all variables from the customizer
         $this->options = get_option('wpcsc1208_customizer_settings', array());
-        //$sass_vars = $this->options['wpcsc_bootstrap_customizer'];
+        $options_settings = get_option('wpcsc1208_option_settings', array());
         
-        //$sass_import_file = '@import "_bootstrap.scss";';
-        //$scss_dir = WPCSC_PLUGIN_DIR.'/assets/bootstrap/stylesheets/';
-        //$css_file = WPCSC_PLUGIN_DIR.'/assets/bootstrap/stylesheets/bootstrap.min.css';
+        $sass_vars = $this->options['wpcsc_custom_variables_customizer'];
         
-        //$this->run_compiler($scss_dir, $css_file, $sass_vars, $sass_import_file);
+        $custom_sass_file = $options_settings['wpcsc_custom_options']['custom_sass_name'];
+        $sass_import_file = '@import "'.$custom_sass_file.'";';
+        
+        $custom_sass_file_path = $options_settings['wpcsc_custom_options']['custom_sass_path'];
+        $scss_dir = get_stylesheet_directory().$custom_sass_file_path;
+        
+        $custom_css_file_path_name = $options_settings['wpcsc_custom_options']['custom_css_path_name'];
+        $css_file = get_stylesheet_directory().$custom_css_file_path_name;
+        
+        $this->run_compiler($scss_dir, $css_file, $sass_vars, $sass_import_file);
     }
 
     public function csc_custom_compiler_options_register($wp_customize){
@@ -71,10 +78,10 @@ class WpCscCustomCustomizerOptions extends WpCscCustomizerOptions
 
     public function check_compile_custom_variables($vars){
         // Make sure we sanatize this using default WordPress Sanatize functions
-        $vars = sanitize_hex_color($vars);
+        $vars = sanitize_text_field($vars);
 
         if(!empty($vars)) {
-           //add_action('customize_save_after', array( $this, 'csc_custom_compiler_options'));
+           add_action('customize_save_after', array( $this, 'csc_custom_compiler_options'));
         }
 
         return $vars;

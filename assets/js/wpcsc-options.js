@@ -29,87 +29,58 @@ jQuery(document).ready(function() {
     
     
     
-    // Form Validation Script
-    
-    var hasHtml5Validation = function() {
-        return typeof document.createElement('input').checkValidity === 'function';
-    };
+    // Form Validation Scripts
     
     var validateForm = function(theForm, e){
 		var checkValidity = theForm.checkValidity(),
         invalidCount = 0, validated = false;
-
-	    if (!checkValidity) {
-	        var formElements = theForm,
-	            len = formElements.length,
-	            invalidElements = [],
-	            el;
-	
-	        // Step through all other form elements
-	        for (var i = 0; i < len; i++) {
-	            // cast form element to a jQuery object
-	            el = jQuery(formElements[i]);
-	
-	            // Check for required
-	            if (el.attr('required')) {
-	
-	                // ... and blank value
-	                if (el.val() == '') {
-	                    el.addClass('invalid');
-	                    invalidElements.push(el);
-	                }
-	
-	                // ... and nothing selected (dropdowns)
-	                if (el.nodeName === "SELECT" && el.selectedIndex === 0) {
-	                    el.addClass('invalid');
-	                    invalidElements.push(el);
-	                }
-	            }
-	            
-	            if (el.attr('pattern')) {
-	            	if(el.validity.valid == false){
-	            		 invalidElements.push(el);
-	            	}
-	            }
-	        }
-	
-	        // Check to see if at least one radio is selected in a radio group.
-	        // If not mark the group's legend as invalid and add the element to the
-	        // invalidElements Array
-	        jQuery(theForm).find('input[type="radio"]').each(function() {
-	            var name = jQuery(this).attr("name");
-	
-	            if (jQuery("input:radio[name=" + name + "]:checked").length == 0) {
-	                jQuery(this).closest("fieldset").find("legend").addClass("invalid");	              
-	                invalidElements.push(this);
-	            }
-	        });
-		
-	        // If we have invalid elements... stop the submit event,
-	        // get the first invalid element, and scroll the user to the first invalid element.
-	        invalidCount = invalidElements.length;
-	        if (invalidCount > 0) {
-	            e.preventDefault();
-	            var firstEl = invalidElements[0];
-	            jQuery('html,body').animate({
-	                scrollTop: jQuery(theForm).offset().top
-	            }, 1000);
-	        }
-	    }
         
-	    return validated;
+        var formElements = theForm,
+            len = formElements.length,
+            el;
+        
+        var invalidElements = [];
+
+        // Step through all other form elements
+        for (var i = 0; i < len; i++) {
+            // cast form element to a jQuery object
+            el = jQuery(formElements[i]);
+
+            if(el.hasClass('wpcsc-js-whitespace-validate')) {
+                var pattern = /\s/;
+                var whitespace = new RegExp(/\s/);
+                if(whitespace.test(el.val())) {
+                    el.addClass('wpcsc-invalid-input');
+                    //invalidElements.push("");
+                    invalidElements.push("No Whitespaces Allowed in Custom Variable Names or Values<br />");
+                }
+            }
+        }
+        
+        // If we have invalid elements... stop the submit event,
+        // get the first invalid element, and scroll the user to the first invalid element.
+        invalidCount = invalidElements.length;
+        if (invalidCount > 0) {
+            e.preventDefault();
+            var firstEl = invalidElements[0];
+            jQuery(theForm).prepend('<div class="error notice is-dismissable"><p>' + invalidElements + '</p></div>');
+            jQuery('html,body').animate({
+                scrollTop: jQuery('body').offset().top
+            }, 500);
+        } else {
+            validated = true;
+        }
+        
+        return validated; 
 	};
     
-    if (hasHtml5Validation()) {
-        jQuery("input[type=submit]").click(function(e) {
-            var $target = jQuery(e.currentTarget);
-            $target.closest('form').addClass('validated');
+    jQuery("body").on("click", "input[type=submit]", function(e) {
+        var $target = jQuery(e.currentTarget);
+        $target.closest('form').addClass('validated');
 
-            $target.closest('form').submit(function(e) {
-                validateForm(this, e);
-            });
+        $target.closest('form').submit(function(e) {
+            validateForm(this, e);
         });
-    }
-    
+    });
     
 });

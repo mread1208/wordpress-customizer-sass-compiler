@@ -79,11 +79,11 @@ if(is_admin()) {
 add_filter('plugin_action_links', 'wpcsc_plugin_action_links', 10, 2);
 
 function wpcsc_plugin_action_links($links, $file) {
-    static $this_plugin;
-    if( !$this_plugin ) {
-        $this_plugin = plugin_basename(__FILE__);
+    static $wpcsc_plugin;
+    if( !$wpcsc_plugin ) {
+        $wpcsc_plugin = plugin_basename(__FILE__);
     }
-    if ($file == $this_plugin) {
+    if ($file == $wpcsc_plugin) {
         $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=csc-plugin-settings">Settings</a>';
         array_unshift($links, $settings_link);
     }

@@ -211,7 +211,7 @@ class WpCscBootstrapCustomizerOptions extends WpCscCustomizerOptions
 
     public function check_compile_bootstrap_fonts($fonts){
         // Make sure we sanatize this using default WordPress Sanatize functions
-        //$fonts = sanitize_hex_color($fonts);
+        $fonts = sanitize_text_field($fonts);
 
         if(!empty($fonts)) {
            add_action('customize_save_after', array( $this, 'csc_bootstrap_compiler_options'));

@@ -114,7 +114,7 @@ class WpCscSettingsPage
             );  
 
             add_settings_field(
-                'bootstrap', // ID
+                'wpcsc_bootstrap_options', // ID
                 'Bootstrap Variables to include', // Title 
                 array( $this, 'bootstrap_options_callback' ), // Callback
                 'csc-plugin-settings', // Page
@@ -126,13 +126,37 @@ class WpCscSettingsPage
         
             add_settings_section(
                 'csc_custom_options_id', // ID
-                'Custom SASS Variables to include', // Title
+                'Custom SASS file and Variables', // Title
                 array( $this, 'csc_custom_options_info' ), // Callback
                 'csc-plugin-settings' // Page
             );  
 
             add_settings_field(
-                'custom', // ID
+                'wpcsc_custom_sass_file', // ID
+                'Path to Custom Sass File (exclude file name)', // Title 
+                array( $this, 'custom_path_callback' ), // Callback
+                'csc-plugin-settings', // Page
+                'csc_custom_options_id' // Section           
+            );
+            
+            add_settings_field(
+                'wpcsc_custom_sass_file_name', // ID
+                'Name of Custom Sass File', // Title 
+                array( $this, 'custom_name_callback' ), // Callback
+                'csc-plugin-settings', // Page
+                'csc_custom_options_id' // Section           
+            );
+            
+            add_settings_field(
+                'wpcsc_custom_css_file_path_name', // ID
+                'Path and Name of Custom CSS File (ex. /assets/mystyles.css)', // Title 
+                array( $this, 'custom_css_path_name_callback' ), // Callback
+                'csc-plugin-settings', // Page
+                'csc_custom_options_id' // Section           
+            );
+            
+            add_settings_field(
+                'wpcsc_custom_options', // ID
                 'Custom Variables to include', // Title 
                 array( $this, 'custom_options_callback' ), // Callback
                 'csc-plugin-settings', // Page
@@ -149,14 +173,48 @@ class WpCscSettingsPage
     public function sanitize( $input )
     {
         $new_input = array();
-        if( isset( $input['bootstrap'] ) ) {
-            $new_input['bootstrap'] = absint( $input['bootstrap'] );
-        } else if( isset( $input['custom'] ) ) {
-            $new_input['custom'] = absint( $input['custom'] );
-        } else { 
-            $new_input[] = $input;
+        if( isset( $input['wpcsc_styles_include']['bootstrap'] ) )
+            $new_input['wpcsc_styles_include']['bootstrap'] = absint( $input['wpcsc_styles_include']['bootstrap'] );
+        
+        if( isset( $input['wpcsc_styles_include']['custom'] ) )
+            $new_input['wpcsc_styles_include']['custom'] = absint( $input['wpcsc_styles_include']['custom'] );
+        
+        if( isset( $input['wpcscs_version'] ) )
+            $new_input['wpcscs_version'] = sanitize_text_field( $input['wpcscs_version'] );
+        
+        if( isset( $input['wpcsc_bootstrap_options']['color_variables'] ) ) {
+            foreach($input['wpcsc_bootstrap_options']['color_variables'] as $bs_color_option) {
+                $new_input['wpcsc_bootstrap_options']['color_variables'][] = sanitize_text_field($bs_color_option);
+            }
         }
-        return $input;
+        
+        if( isset( $input['wpcsc_bootstrap_options']['font_variables'] ) ) {
+            foreach($input['wpcsc_bootstrap_options']['font_variables'] as $bs_font_option) {
+                $new_input['wpcsc_bootstrap_options']['font_variables'][] = sanitize_text_field($bs_font_option);
+            }
+        }
+        
+        // Custom SASS options
+        
+        if( isset( $input['wpcsc_custom_options']['custom_sass_path'] ) )
+            $new_input['wpcsc_custom_options']['custom_sass_path'] = sanitize_text_field( $input['wpcsc_custom_options']['custom_sass_path'] );
+        
+        if( isset( $input['wpcsc_custom_options']['custom_sass_name'] ) )
+            $new_input['wpcsc_custom_options']['custom_sass_name'] = sanitize_text_field( $input['wpcsc_custom_options']['custom_sass_name'] );
+        
+        if( isset( $input['wpcsc_custom_options']['custom_css_path_name'] ) )
+            $new_input['wpcsc_custom_options']['custom_css_path_name'] = sanitize_text_field( $input['wpcsc_custom_options']['custom_css_path_name'] );
+        
+        if( isset( $input['wpcsc_custom_options']['custom_sass_variables'] ) ) {
+            $i = 0;
+            foreach($input['wpcsc_custom_options']['custom_sass_variables'] as $custom_sass_var) {
+                $new_input['wpcsc_custom_options']['custom_sass_variables'][$i]['key'] = sanitize_text_field($custom_sass_var['key']);
+                $new_input['wpcsc_custom_options']['custom_sass_variables'][$i]['value'] = sanitize_text_field($custom_sass_var['value']);
+                $i++;
+            }
+        }
+        
+        return $new_input;
     }
 
     /** 
@@ -171,7 +229,7 @@ class WpCscSettingsPage
     }
     
     public function csc_custom_options_info() {
-        print 'Add custom SASS variables to the theme customizer.';
+        print 'Add the path to your custom SASS file.  Paths should start with the root of your theme. example: "/library/scss/".  After you add your path, you may add your own variables below.  Adding these variables will allow you to modify your default SASS options in the theme customizer.';
     }
 
     /** 
@@ -214,6 +272,27 @@ class WpCscSettingsPage
         echo $html;
     }
     
+    public function custom_path_callback() { 
+        $this->options = get_option('wpcsc1208_option_settings');
+        $value = isset($this->options['wpcsc_custom_options']['custom_sass_path']) ? $this->options['wpcsc_custom_options']['custom_sass_path'] : '';
+        $html = '<input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_path]" value="'.$value.'" placeholder="ex. /assets/scss/" required="required" class="wpcsc-js-whitespace-validate" />';
+        echo $html;
+    }
+    
+    public function custom_name_callback() { 
+        $this->options = get_option('wpcsc1208_option_settings');
+        $value = isset($this->options['wpcsc_custom_options']['custom_sass_name']) ? $this->options['wpcsc_custom_options']['custom_sass_name'] : '';
+        $html = '<input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_name]" value="'.$value.'" placeholder="ex. style.scss" required="required" class="wpcsc-js-whitespace-validate" />';
+        echo $html;
+    }
+    
+    public function custom_css_path_name_callback(){
+        $this->options = get_option('wpcsc1208_option_settings');
+        $value = isset($this->options['wpcsc_custom_options']['custom_css_path_name']) ? $this->options['wpcsc_custom_options']['custom_css_path_name'] : '';
+        $html = '<input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_css_path_name]" value="'.$value.'" placeholder="ex. style.scss" required="required" class="wpcsc-js-whitespace-validate" />';
+        echo $html;
+    }
+    
     public function custom_options_callback() { 
         $this->options = get_option('wpcsc1208_option_settings');
         
@@ -225,8 +304,8 @@ class WpCscSettingsPage
         if(!empty($this->options['wpcsc_custom_options'])){
             for($i = 0; $i < count($this->options['wpcsc_custom_options']['custom_sass_variables']); ++$i) {
                 $html .= '<tr class="wpcsc-multi-field">
-                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][key]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['key'].'" placeholder="Sass Variable" required="required" /></td>
-                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][value]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['value'].'" placeholder="Default Value" required="required" /></td>
+                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][key]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['key'].'" placeholder="Sass Variable" required="required" class="wpcsc-js-whitespace-validate" /></td>
+                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][value]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['value'].'" placeholder="Default Value" required="required" class="wpcsc-js-whitespace-validate" /></td>
                     <td><a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
                 </tr>';
             }
