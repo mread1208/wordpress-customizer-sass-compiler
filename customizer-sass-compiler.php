@@ -95,6 +95,9 @@ add_action('admin_enqueue_scripts', 'wpcsc_enqueue_scripts', 50);
 function wpcsc_enqueue_scripts() {
     wp_register_script('wpscs-options', WPCSC_PLUGIN_URL .'/assets/js/wpcsc-options.js', array('jquery'));
     wp_enqueue_script('wpscs-options');
+    
+    wp_register_style('wpscs-options-styles', WPCSC_PLUGIN_URL .'/assets/css/wpscs-options-styles.css');
+    wp_enqueue_style('wpscs-options-styles');
 }
 
 ?>

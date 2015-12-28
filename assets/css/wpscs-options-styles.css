@@ -1,0 +1,17 @@
+.wpcsc-multifield-wrapper {
+    
+}
+
+.wpcsc-multifields {
+    margin: 0;
+}
+
+.wpcsc-multifields thead th,
+.wpcsc-multifields thead td,
+.wpcsc-multifields tfoot td {
+    padding: 10px;
+}
+
+.wpcsc-multifields tbody td {
+    padding: 5px 10px;
+}

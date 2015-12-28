@@ -217,17 +217,21 @@ class WpCscSettingsPage
     public function custom_options_callback() { 
         $this->options = get_option('wpcsc1208_option_settings');
         
-        $html = '<div class="wpcsc-multifield-wrapper"><div class="wpcsc-multifields">';
+        $html = '<div class="wpcsc-multifield-wrapper">
+            <table class="form-table wpcsc-multifields">
+                <thead><tr><th>Variable Name</th><th>Value Name</th><th>&nbsp;</th></thead>
+                <tfoot><tr><td colspan="3"><a href="#" class="button wpcsc-js-add-repeater-field">Add New Sass Variable</a></td></tr></tfoot>
+                <tbody>';
         if(!empty($this->options['wpcsc_custom_options'])){
             for($i = 0; $i < count($this->options['wpcsc_custom_options']['custom_sass_variables']); ++$i) {
-                $html .= '<div class="wpcsc-multi-field">
-                    <input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][key]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['key'].'" placeholder="Sass Variable" required="required" />
-                    <input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][value]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['value'].'" placeholder="Default Value" required="required" />
-                    <a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
-                </div>';
+                $html .= '<tr class="wpcsc-multi-field">
+                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][key]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['key'].'" placeholder="Sass Variable" required="required" /></td>
+                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][value]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['value'].'" placeholder="Default Value" required="required" /></td>
+                    <td><a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
+                </tr>';
             }
         }
-        $html .= '</div><a href="#" class="button wpcsc-js-add-repeater-field">Add New Sass Variable</a></div>';
+        $html .= '</tbody></table></div>';
         echo $html;
         
     }
