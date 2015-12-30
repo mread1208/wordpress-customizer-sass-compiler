@@ -1,0 +1,17 @@
+Plugin Updates
+
+1.  Include paths to theme BS SASS and CSS files
+2.  Add more default BS variables
+3.  Ensure there are slashes included in the custom sass file path
+4.  Check to make sure custom sass file exists, and is writable
+5.  When you remove a variable, we need to recompile the Sass back to it's default value BEFORE removing from the database
+	a.  When you turn off custom variables, also need to revert back to defaults
+	b.  Same for BS.
+6.  Create different sanitize functions with a foreach loop so we don't have to write an "if" statement for each one
+7.  Create a "color picker" option for the custom variables
+
+
+Future Enhancements
+
+1.  Add JS fallback
+2.  Ajax error handling

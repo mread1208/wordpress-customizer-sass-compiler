@@ -297,8 +297,8 @@ class WpCscSettingsPage
         $this->options = get_option('wpcsc1208_option_settings');
         
         $html = '<div class="wpcsc-multifield-wrapper">
-            <table class="form-table wpcsc-multifields">
-                <thead><tr><th>Variable Name</th><th>Value Name</th><th>&nbsp;</th></thead>
+            <table class="form-table wpcsc-multifields" style="max-width: 300px">
+                <thead><tr><th>Variable Name</th><th>Default Value</th><th>&nbsp;</th></thead>
                 <tfoot><tr><td colspan="3"><a href="#" class="button wpcsc-js-add-repeater-field">Add New Sass Variable</a></td></tr></tfoot>
                 <tbody>';
         if(!empty($this->options['wpcsc_custom_options'])){
