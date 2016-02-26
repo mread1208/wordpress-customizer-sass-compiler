@@ -54,16 +54,23 @@ class WpCscSettingsPage
                 ?>
                 <?php // So we don't overwrite our version number in the DB ?>
                 <input type="hidden" name="wpcsc1208_option_settings[wpcscs_version]" value="<?= WPCSC_VERSION_NUM; ?>" />
+                <?php // We put the CSS content back in when we sanitize, keys are in there for looping in the sanitize function 
+                foreach($this->options['wpcsc_content'] as $key => $value) { ?>
+                    <input type="hidden" name="wpcsc1208_option_settings[wpcsc_content][<?= $key; ?>]" value="" />
+                <?php } ?>
+                
                 <?php submit_button();  ?>
             </form>
-            <p>wpcsc1208_option_settings</p>
-            <?php echo '<pre>';
-            print_r(get_option('wpcsc1208_option_settings'));
-            echo '</pre>';  ?>
-            <p>wpcsc1208_customizer_settings</p>
-            <?php echo '<pre>';
-            print_r(get_option('wpcsc1208_customizer_settings'));
-            echo '</pre>'; ?>
+            <?php
+            
+            //echo '<p>wpcsc1208_option_settings</p> <pre>';
+            //print_r(get_option('wpcsc1208_option_settings'));
+            //echo '</pre><p>wpcsc1208_customizer_settings</p> <pre>';
+            //print_r(get_option('wpcsc1208_customizer_settings'));
+            //echo '</pre>'; 
+            
+            ?>
+            
         </div>
         <?php
     }
@@ -181,6 +188,18 @@ class WpCscSettingsPage
         
         if( isset( $input['wpcscs_version'] ) )
             $new_input['wpcscs_version'] = sanitize_text_field( $input['wpcscs_version'] );
+        
+        if( isset( $input['wpcsc_content'] ) ) {
+            foreach($input['wpcsc_content'] as $key => $value) {
+                if($value == '') {
+                    $this->options = get_option( 'wpcsc1208_option_settings' );
+                    $new_input['wpcsc_content'][$key] = wp_kses( $this->options['wpcsc_content'][$key], array( '\'', '\"' ) ); 
+                } else {
+                    $new_input['wpcsc_content'][$key] = wp_kses( $value, array( '\'', '\"' ) ); 
+                }
+            }
+        }
+            
         
         if( isset( $input['wpcsc_bootstrap_options']['color_variables'] ) ) {
             foreach($input['wpcsc_bootstrap_options']['color_variables'] as $bs_color_option) {

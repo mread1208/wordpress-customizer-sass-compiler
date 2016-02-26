@@ -31,10 +31,10 @@ if (!defined('WPCSC_PLUGIN_URL'))
 if (!defined('WPCSC_VERSION_NUM'))
     define('WPCSC_VERSION_NUM', '1.0.0');
 
-$wpcscs1208Version = array('wpcscs_version' => WPCSC_VERSION_NUM);
+$wpcscs1208OptionSettings = array('wpcscs_version' => WPCSC_VERSION_NUM, 'wpcsc_content' => array('bootstrap' => '', 'custom' => ''));
 
 // Creates row in DB for all our options page settings
-add_option('wpcsc1208_option_settings', $wpcscs1208Version);
+add_option('wpcsc1208_option_settings', $wpcscs1208OptionSettings);
 // Creates row in DB for all our customizer page settings
 add_option('wpcsc1208_customizer_settings');
 
@@ -73,31 +73,9 @@ include_once WPCSC_PLUGIN_DIR . '/customizer-sass-options.php'; // Options page 
  */
 
 if(is_admin()) {
-    $wpcsc_settings_page = new WpCscSettingsPage();
-}
-
-add_filter('plugin_action_links', 'wpcsc_plugin_action_links', 10, 2);
-
-function wpcsc_plugin_action_links($links, $file) {
-    static $wpcsc_plugin;
-    if( !$wpcsc_plugin ) {
-        $wpcsc_plugin = plugin_basename(__FILE__);
-    }
-    if ($file == $wpcsc_plugin) {
-        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=csc-plugin-settings">Settings</a>';
-        array_unshift($links, $settings_link);
-    }
-    return $links;
-}
-
-add_action('admin_enqueue_scripts', 'wpcsc_enqueue_scripts', 50);
-
-function wpcsc_enqueue_scripts() {
-    wp_register_script('wpscs-options', WPCSC_PLUGIN_URL .'/assets/js/wpcsc-options.js', array('jquery'));
-    wp_enqueue_script('wpscs-options');
-    
-    wp_register_style('wpscs-options-styles', WPCSC_PLUGIN_URL .'/assets/css/wpscs-options-styles.css');
-    wp_enqueue_style('wpscs-options-styles');
+    include_once WPCSC_PLUGIN_DIR . '/includes/admin.php';
+} else if( ! is_admin() ) {
+    include_once WPCSC_PLUGIN_DIR . '/includes/public.php';
 }
 
 ?>

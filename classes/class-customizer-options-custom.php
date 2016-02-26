@@ -22,10 +22,13 @@ class WpCscCustomCustomizerOptions extends WpCscCustomizerOptions
         $custom_sass_file_path = $options_settings['wpcsc_custom_options']['custom_sass_path'];
         $scss_dir = get_stylesheet_directory().$custom_sass_file_path;
         
-        $custom_css_file_path_name = $options_settings['wpcsc_custom_options']['custom_css_path_name'];
-        $css_file = get_stylesheet_directory().$custom_css_file_path_name;
+        //$custom_css_file_path_name = $options_settings['wpcsc_custom_options']['custom_css_path_name'];
+        //$css_file = get_stylesheet_directory().$custom_css_file_path_name;
         
-        $this->run_compiler($scss_dir, $css_file, $sass_vars, $sass_import_file);
+        // Name of the file we need to enqueue
+        $css_name = 'custom';
+        
+        $this->run_compiler($scss_dir, $sass_vars, $sass_import_file, $css_name);
     }
 
     public function csc_custom_compiler_options_register($wp_customize){

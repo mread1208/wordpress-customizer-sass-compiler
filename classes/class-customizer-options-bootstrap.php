@@ -16,9 +16,11 @@ class WpCscBootstrapCustomizerOptions extends WpCscCustomizerOptions
         
         $sass_import_file = '@import "_bootstrap.scss";';
         $scss_dir = WPCSC_PLUGIN_DIR.'/assets/bootstrap/stylesheets/';
-        $css_file = WPCSC_PLUGIN_DIR.'/assets/bootstrap/stylesheets/bootstrap.min.css';
         
-        $this->run_compiler($scss_dir, $css_file, $sass_vars, $sass_import_file);
+        // Name of the file we need to enqueue
+        $css_name = 'bootstrap';
+        
+        $this->run_compiler($scss_dir, $sass_vars, $sass_import_file, $css_name);
     }
 
     public function csc_customize_bootstrap_register($wp_customize){
@@ -230,11 +232,49 @@ function csc_customizer_bootstrap_init() {
     // Don't enqueue on admin pages
     if(!is_admin()) {
         wp_register_script('csc_bootstrapjs', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array('jquery'),'3.3.5', true );
-        wp_register_style('csc_bootstrapcss', WPCSC_PLUGIN_URL.'/assets/bootstrap/stylesheets/bootstrap.min.css',false,'3.3.6','all');    
+        //wp_register_style('csc_bootstrapcss', WPCSC_PLUGIN_URL.'/assets/bootstrap/stylesheets/bootstrap.min.css',false,'3.3.6','all');    
 
         wp_enqueue_script('csc_bootstrapjs');
-        wp_enqueue_style('csc_bootstrapcss');
+        // wp_enqueue_style('csc_bootstrapcss');
     }
 }
+
+/**
+* Enqueue link so we can add the CSS through PHP.
+*/
+function wpcsc_register_bootstrap_style() {
+    $url = home_url();
+
+    if ( is_ssl() ) {
+        $url = home_url( '/', 'https' );
+    }
+
+    wp_register_style( 'wpcsc_style', add_query_arg( array( 'wpcsc_bootstrap' => 1 ), $url ) );
+
+    wp_enqueue_style( 'wpcsc_style' );
+}
+add_action( 'wp_enqueue_scripts', 'wpcsc_register_bootstrap_style', 99 );
+
+/**
+ * If the query var is set, add the Customizer CSS.
+ */
+function wpcsc_maybe_print_bootstrap_css() {
+
+    // Only print CSS if this is a stylesheet request
+    if( ! isset( $_GET['wpcsc_bootstrap'] ) || intval( $_GET['wpcsc_bootstrap'] ) !== 1 ) {
+        return;
+    }
+
+    ob_start();
+    header( 'Content-type: text/css' );
+    $options     = get_option( 'wpcsc1208_option_settings' );
+    $raw_content = isset( $options['wpcsc_content']['bootstrap'] ) ? $options['wpcsc_content']['bootstrap'] : '';
+    $content     = wp_kses( $raw_content, array( '\'', '\"' ) );
+    $content     = str_replace( '&gt;', '>', $content );
+    echo $content; //xss okay
+    die();
+}
+
+add_action( 'plugins_loaded', 'wpcsc_maybe_print_bootstrap_css' );
 
 ?>

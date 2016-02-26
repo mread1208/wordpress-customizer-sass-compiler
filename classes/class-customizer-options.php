@@ -9,7 +9,7 @@ class WpCscCustomizerOptions {
     * @access public
     */
 
-    public $scss_dir, $css_file, $sass_vars, $sass_import_file, $compile_method, $scssc, $compile_errors;
+    public $scss_dir, $sass_vars, $sass_import_file, $css_name, $compile_method, $scssc, $compile_errors;
     
     /**
     * Set values for WpCscCustomizerOptions::properties
@@ -21,7 +21,7 @@ class WpCscCustomizerOptions {
         $this->compile_errors = array();
     }
     
-    public function run_compiler($scss_dir, $css_file, $sass_vars, $sass_import_file, $compile_method = 'scss_formatter_nested') {
+    public function run_compiler($scss_dir, $sass_vars, $sass_import_file, $css_name, $compile_method = 'scss_formatter_nested') {
         
         require_once(WPCSC_PLUGIN_DIR.'/scssphp/scss.inc.php');
         $scss = new scssc();
@@ -30,16 +30,13 @@ class WpCscCustomizerOptions {
         $scss->setVariables($sass_vars);
         $new_css = $scss->compile($sass_import_file);
         
-        if (is_writable($scss_dir)) {
-            $current_css = file_get_contents($css_file);
-            file_put_contents($css_file, $new_css);
-        } else {
-            $errors = array(
-                'file' => 'CSS Directory',
-                'message' => __("File Permissions Error, permission denied. Please make the plugin CSS directory writable.", 'wpcsc1208')
-            );
-            array_push($this->compile_errors, $errors);
-        }
+        /* Write the CSS to the Database */
+        $wpcscOptions = get_option('wpcsc1208_option_settings');
+        /* Sanitze the CSS before going into the Database
+        Refer to this doc, http://wptavern.com/wordpress-theme-review-team-sets-new-guidelines-for-custom-css-boxes */
+        $wpcscOptions['wpcsc_content']['bootstrap'] = wp_kses( $new_css, array( '\'', '\"' ) );
+        update_option('wpcsc1208_option_settings', $wpcscOptions);
+        
         
     }
     
