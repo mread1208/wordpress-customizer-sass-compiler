@@ -42,7 +42,7 @@ add_option('wpcsc1208_customizer_settings');
 /*
  * 2. REQUIRE DEPENDANCIES
  *
- *    scssphp - scss compiler
+ *    scssphp - scss compiler 
  *    class-customizer-options.php - main class for customizer options
  *    
  *    @param $styleIncludeOptions = Get's all the included stylesheets set in the options menu
