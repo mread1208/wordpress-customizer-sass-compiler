@@ -228,25 +228,9 @@ class WpCscBootstrapCustomizerOptions extends WpCscCustomizerOptions
     
 }
 
-add_action( 'init' , 'csc_customizer_bootstrap_init' );
-
 function csc_customizer_bootstrap_init() {
     $csc_customizer_bootstrap_options = new WpCscBootstrapCustomizerOptions();
     
-    // Don't enqueue on admin pages
-    if(!is_admin()) {
-        wp_register_script('csc_bootstrapjs', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array('jquery'),'3.3.5', true );
-        //wp_register_style('csc_bootstrapcss', WPCSC_PLUGIN_URL.'/assets/bootstrap/stylesheets/bootstrap.min.css',false,'3.3.6','all');    
-
-        wp_enqueue_script('csc_bootstrapjs');
-        // wp_enqueue_style('csc_bootstrapcss');
-    }
-}
-
-/**
-* Enqueue link so we can add the CSS through PHP.
-*/
-function wpcsc_register_bootstrap_style() {
     $url = home_url();
     $boostrap_option = get_option('wpcsc1208_option_settings');
     
@@ -254,13 +238,17 @@ function wpcsc_register_bootstrap_style() {
         $url = home_url( '/', 'https' );
     }
     
-    // Only enqueue this stylesheet if bootstrap is turned on in the options panel
-    if ($boostrap_option['wpcsc_styles_include']['bootstrap']) {
-        wp_register_style( 'wpcsc_bootstrap_style', add_query_arg( array( 'wpcsc_bootstrap' => 1 ), $url ) );
+    // Don't enqueue on admin pages or if bootstrap is turned on in the options panel
+    if(!is_admin() && $boostrap_option['wpcsc_styles_include']['bootstrap']) {
+        wp_register_script('csc_bootstrapjs', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js', array('jquery'),'3.3.5', true );
+        wp_enqueue_script('csc_bootstrapjs');
+        
+        wp_register_style( 'wpcsc_bootstrap_style', add_query_arg( array( 'wpcsc_bootstrap' => 1 ), $url ), '', '3.3.6' );
         wp_enqueue_style( 'wpcsc_bootstrap_style' );
     }
 }
-add_action( 'wp_enqueue_scripts', 'wpcsc_register_bootstrap_style', 99 );
+
+add_action( 'init' , 'csc_customizer_bootstrap_init' );
 
 /**
  * If the query var is set, add the Customizer CSS.
