@@ -54,13 +54,24 @@ class WpCscSettingsPage
                 ?>
                 <?php // So we don't overwrite our version number in the DB ?>
                 <input type="hidden" name="wpcsc1208_option_settings[wpcscs_version]" value="<?= WPCSC_VERSION_NUM; ?>" />
-                <?php // We put the CSS content back in when we sanitize, keys are in there for looping in the sanitize function 
-                foreach($this->options['wpcsc_content'] as $key => $value) { ?>
-                    <input type="hidden" name="wpcsc1208_option_settings[wpcsc_content][<?= $key; ?>]" value="" />
+                
+                <?php // So we don't overwrite the CSS when we save the options 
+                foreach($this->options['wpcsc_content'] as $content_key => $content_value) { ?>
+                    <input type="hidden" name="wpcsc1208_option_settings[wpcsc_content][<?= $content_key; ?>]" value="<?= esc_html($content_value); ?>" />
                 <?php } ?>
                 
-                <?php submit_button();  ?>
+                <?php // Retain the hidden BS customizer options (If we turn off Bootstrap, we don't want to completely remove these settings in case the user turns them back on)
+                if(!$this->options['wpcsc_styles_include']['bootstrap'] && !empty($this->options['wpcsc_bootstrap_options'])) {
+                    foreach($this->options['wpcsc_bootstrap_options'] as $bs_styles_k => $bs_styles_v){
+                        foreach($bs_styles_v as $key => $value){
+                            echo '<input type="hidden" name="wpcsc1208_option_settings[wpcsc_bootstrap_options]['.$bs_styles_k.'][]" value="'.$value.'" />';
+                        }
+                    }
+                }
+                ?>
+                <?php submit_button( __( 'Update Settings', 'wpcsc1208' ), 'primary', 'submit', true ); ?>
             </form>
+            
             <?php
             
             //echo '<p>wpcsc1208_option_settings</p> <pre>';
@@ -191,12 +202,7 @@ class WpCscSettingsPage
         
         if( isset( $input['wpcsc_content'] ) ) {
             foreach($input['wpcsc_content'] as $key => $value) {
-                if($value == '') {
-                    $this->options = get_option( 'wpcsc1208_option_settings' );
-                    $new_input['wpcsc_content'][$key] = wp_kses( $this->options['wpcsc_content'][$key], array( '\'', '\"' ) ); 
-                } else {
-                    $new_input['wpcsc_content'][$key] = wp_kses( $value, array( '\'', '\"' ) ); 
-                }
+                $new_input['wpcsc_content'][$key] = wp_kses( $value, array( '\'', '\"' ) ); 
             }
         }
             

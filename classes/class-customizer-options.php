@@ -34,7 +34,7 @@ class WpCscCustomizerOptions {
         $wpcscOptions = get_option('wpcsc1208_option_settings');
         /* Sanitze the CSS before going into the Database
         Refer to this doc, http://wptavern.com/wordpress-theme-review-team-sets-new-guidelines-for-custom-css-boxes */
-        $wpcscOptions['wpcsc_content']['bootstrap'] = wp_kses( $new_css, array( '\'', '\"' ) );
+        $wpcscOptions['wpcsc_content'][$css_name] = wp_kses( $new_css, array( '\'', '\"' ) );
         update_option('wpcsc1208_option_settings', $wpcscOptions);
         
         

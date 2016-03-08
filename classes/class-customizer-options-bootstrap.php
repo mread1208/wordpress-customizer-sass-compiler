@@ -6,7 +6,11 @@ class WpCscBootstrapCustomizerOptions extends WpCscCustomizerOptions
     private $options, $bs_csc_colors, $bs_csc_fonts;
     
     public function __construct() {
-        add_action('customize_register', array($this, 'csc_customize_bootstrap_register'));
+        $this->options = get_option('wpcsc1208_option_settings', array());
+        // We only want to load the customizer options if this is turned on.
+        if($this->options['wpcsc_styles_include']['bootstrap']) {
+            add_action('customize_register', array($this, 'csc_customize_bootstrap_register'));
+        }
     }
     
     public function csc_bootstrap_compiler_options() {
@@ -244,14 +248,17 @@ function csc_customizer_bootstrap_init() {
 */
 function wpcsc_register_bootstrap_style() {
     $url = home_url();
-
+    $boostrap_option = get_option('wpcsc1208_option_settings');
+    
     if ( is_ssl() ) {
         $url = home_url( '/', 'https' );
     }
-
-    wp_register_style( 'wpcsc_style', add_query_arg( array( 'wpcsc_bootstrap' => 1 ), $url ) );
-
-    wp_enqueue_style( 'wpcsc_style' );
+    
+    // Only enqueue this stylesheet if bootstrap is turned on in the options panel
+    if ($boostrap_option['wpcsc_styles_include']['bootstrap']) {
+        wp_register_style( 'wpcsc_bootstrap_style', add_query_arg( array( 'wpcsc_bootstrap' => 1 ), $url ) );
+        wp_enqueue_style( 'wpcsc_bootstrap_style' );
+    }
 }
 add_action( 'wp_enqueue_scripts', 'wpcsc_register_bootstrap_style', 99 );
 
