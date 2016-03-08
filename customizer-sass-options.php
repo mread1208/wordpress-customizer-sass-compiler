@@ -314,7 +314,7 @@ class WpCscSettingsPage
     public function custom_path_callback() { 
         $this->options = get_option('wpcsc1208_option_settings');
         $value = isset($this->options['wpcsc_custom_options']['custom_sass_path']) ? $this->options['wpcsc_custom_options']['custom_sass_path'] : '';
-        $html = '<input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_path]" value="'.$value.'" placeholder="ex. /assets/scss/" class="wpcsc-js-whitespace-validate" />';
+        $html = '<input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_path]" value="'.$value.'" placeholder="ex. /assets/scss/" class="wpcsc-js-whitespace-validate wpcsc-js-check-slashes" />';
         echo $html;
     }
     

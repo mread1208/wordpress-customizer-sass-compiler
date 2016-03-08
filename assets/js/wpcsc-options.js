@@ -1,4 +1,20 @@
 jQuery(document).ready(function() {
+    
+    // Auto add slashes before and after the path to the custom sass file
+    var field = document.getElementsByClassName("wpcsc-js-check-slashes");
+	jQuery(field).focusout(function() {
+        var firstChar = jQuery(field).val().substr(0, 1);
+        var lastChar = jQuery(field).val().slice(-1);
+        if(firstChar != '/') {
+            jQuery(field).val('/' + jQuery(field).val());
+        }
+        if(lastChar != '/') {
+            jQuery(field).val(jQuery(field).val() + '/');
+        }
+	});
+    
+    
+    // Show and hide the repeater fields for the custom variables
     jQuery('body').on('click', '.wpcsc-js-add-repeater-field', function(e){
         e.preventDefault();
         var wrapper = jQuery(this).parents('.wpcsc-multifield-wrapper').find('.wpcsc-multifields');
