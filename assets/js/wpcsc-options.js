@@ -1,17 +1,38 @@
 jQuery(document).ready(function() {
     
     // Auto add slashes before and after the path to the custom sass file
-    var field = document.getElementsByClassName("wpcsc-js-check-slashes");
-	jQuery(field).focusout(function() {
-        var firstChar = jQuery(field).val().substr(0, 1);
-        var lastChar = jQuery(field).val().slice(-1);
+    jQuery('.wpcsc-js-check-slashes').focusout(function() {
+        var firstChar = jQuery(this).val().substr(0, 1);
+        var lastChar = jQuery(this).val().slice(-1);
         if(firstChar != '/') {
-            jQuery(field).val('/' + jQuery(field).val());
+            jQuery(this).val('/' + jQuery(this).val());
         }
         if(lastChar != '/') {
-            jQuery(field).val(jQuery(field).val() + '/');
+            jQuery(this).val(jQuery(this).val() + '/');
         }
 	});
+    
+    // Auto add a # before the text field when the color picker type is selected
+    jQuery('body').on('focusout', '.wpcsc-js-check-colorpickerval', function() {
+        var firstChar = jQuery(this).val().substr(0, 1);
+        if(firstChar != '#') {
+            jQuery(this).val('#' + jQuery(this).val());
+        }
+	});
+    
+    // Add / Remove wpcsc-js-check-colorpickerval on the text field when select value changes 
+    jQuery('body').on('change', 'select.wpcsc-js-custom-type', function (e) {
+        var optionSelected = jQuery("option:selected", this);
+        var valueSelected = this.value;
+        var customValueTextField =  jQuery(this).parents('.wpcsc-multifield-wrapper').find('.wpcsc-js-custom-value');
+        if(valueSelected == 'colorpicker') {
+            jQuery(customValueTextField).addClass('wpcsc-js-check-colorpickerval');
+            jQuery(customValueTextField).attr('placeholder', 'e.g. #111111');
+        } else {
+            jQuery(customValueTextField).removeClass('wpcsc-js-check-colorpickerval');
+            jQuery(customValueTextField).attr('placeholder', 'default-value');
+        }
+    });
     
     
     // Show and hide the repeater fields for the custom variables
@@ -20,8 +41,9 @@ jQuery(document).ready(function() {
         var wrapper = jQuery(this).parents('.wpcsc-multifield-wrapper').find('.wpcsc-multifields');
         var inputFieldCount = jQuery(wrapper).find('tbody').children().length;
         var inputField = '<tr class="wpcsc-multi-field">' +
-                '<td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables][' + inputFieldCount + '][key]" value="" placeholder="Sass Variable" required="required" /></td>' +
-                '<td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables][' + inputFieldCount + '][value]" value="" placeholder="Default Value" required="required" /></td>' +
+                '<td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables][' + inputFieldCount + '][key]" value="" placeholder="sass-variable" required="required" /></td>' +
+                '<td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables][' + inputFieldCount + '][value]" value="" placeholder="default-value" required="required" class="wpcsc-js-custom-value" /></td>' +
+                '<td><select name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables][' + inputFieldCount + '][type]" class="wpcsc-js-custom-type"><option value="text">Text Field</option><option value="colorpicker">Color Picker</option></select></td>' +
                 '<td><a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a></td>' +
             '</tr>';
         var inputCount = 1;

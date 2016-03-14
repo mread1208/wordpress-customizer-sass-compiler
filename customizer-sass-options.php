@@ -249,6 +249,7 @@ class WpCscSettingsPage
             foreach($input['wpcsc_custom_options']['custom_sass_variables'] as $custom_sass_var) {
                 $new_input['wpcsc_custom_options']['custom_sass_variables'][$i]['key'] = sanitize_text_field($custom_sass_var['key']);
                 $new_input['wpcsc_custom_options']['custom_sass_variables'][$i]['value'] = sanitize_text_field($custom_sass_var['value']);
+                $new_input['wpcsc_custom_options']['custom_sass_variables'][$i]['type'] = sanitize_text_field($custom_sass_var['type']);
                 $i++;
             }
         }
@@ -330,15 +331,24 @@ class WpCscSettingsPage
         
         $html = '<div class="wpcsc-multifield-wrapper">
             <table class="form-table wpcsc-multifields" style="max-width: 300px">
-                <thead><tr><th>Variable Name</th><th>Default Value</th><th>&nbsp;</th></thead>
-                <tfoot><tr><td colspan="3"><a href="#" class="button wpcsc-js-add-repeater-field">Add New Sass Variable</a></td></tr></tfoot>
+                <thead><tr><th>Variable Name</th><th>Default Value</th><th>Field Type</th><th>&nbsp;</th></thead>
+                <tfoot><tr><td colspan="4"><a href="#" class="button wpcsc-js-add-repeater-field">Add New Sass Variable</a></td></tr></tfoot>
                 <tbody>';
         if(!empty($this->options['wpcsc_custom_options']['custom_sass_variables'])){
             for($i = 0; $i < count($this->options['wpcsc_custom_options']['custom_sass_variables']); ++$i) {
+                $textselect = ($this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['type'] == 'text') ? ' selected' : '';
+                $colorselect = ($this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['type'] == 'colorpicker') ? ' selected' : '';
+                $colorselectClass = ($this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['type'] == 'colorpicker') ? ' wpcsc-js-check-colorpickerval' : '';
+                
                 $html .= '<tr class="wpcsc-multi-field">
-                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][key]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['key'].'" placeholder="Sass Variable" required="required" class="wpcsc-js-whitespace-validate" /></td>
-                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][value]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['value'].'" placeholder="Default Value" required="required" class="wpcsc-js-whitespace-validate" /></td>
-                    <td><a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
+                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][key]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['key'].'" placeholder="sass-variable" required="required" class="wpcsc-js-whitespace-validate" /></td>
+                    <td><input type="text" name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][value]" value="'.$this->options['wpcsc_custom_options']['custom_sass_variables'][$i]['value'].'" placeholder="default-value" required="required" class="wpcsc-js-whitespace-validate wpcsc-js-custom-value'.$colorselectClass.'" /></td>
+                    <td>
+                        <select name="wpcsc1208_option_settings[wpcsc_custom_options][custom_sass_variables]['.$i.'][type]" class="wpcsc-js-custom-type">
+                            <option value="text"'.$textselect.'>Text Field</option>
+                            <option value="colorpicker"'.$colorselect.'>Color Picker</option>
+                        </select>
+                    </td><td><a href="#" class="button wpcsc-js-remove-repeater-field">Remove</a>
                 </tr>';
             }
         }

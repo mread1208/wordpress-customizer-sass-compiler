@@ -65,13 +65,31 @@ class WpCscCustomCustomizerOptions extends WpCscCustomizerOptions
                 );
                 
                 // CONTROLS
-                $wp_customize->add_control(
-                    'wpcsc1208_customizer_settings[wpcsc_custom_variables_customizer]['.$custom_sass_option['key'].']', array(
-                        'label' => $custom_sass_option['key'], 
-                        'section' => 'custom_variables_section',
-                        'settings' => 'wpcsc1208_customizer_settings[wpcsc_custom_variables_customizer]['.$custom_sass_option['key'].']'
-                    )
-                );
+                
+                if($custom_sass_option['type'] == 'colorpicker'){
+                    
+                    $wp_customize->add_control(
+                        new WP_Customize_Color_Control(
+                            $wp_customize,
+                            $custom_sass_option['key'], 
+                            array(
+                                'label' => $custom_sass_option['key'], 
+                                'section' => 'custom_variables_section',
+                                'settings' => 'wpcsc1208_customizer_settings[wpcsc_custom_variables_customizer]['.$custom_sass_option['key'].']'
+                            )
+                        )
+                    );
+
+                } else {
+                    
+                    $wp_customize->add_control(
+                        'wpcsc1208_customizer_settings[wpcsc_custom_variables_customizer]['.$custom_sass_option['key'].']', array(
+                            'label' => $custom_sass_option['key'], 
+                            'section' => 'custom_variables_section',
+                            'settings' => 'wpcsc1208_customizer_settings[wpcsc_custom_variables_customizer]['.$custom_sass_option['key'].']'
+                        )
+                    );
+                }
             }
         }
     }
