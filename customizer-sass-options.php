@@ -356,5 +356,4 @@ class WpCscSettingsPage
         echo $html;
         
     }
-    
 }

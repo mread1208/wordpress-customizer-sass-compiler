@@ -148,5 +148,5 @@ function wpcsc_maybe_print_custom_css() {
 }
 
 add_action( 'plugins_loaded', 'wpcsc_maybe_print_custom_css' );
-
+           
 ?>
