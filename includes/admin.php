@@ -10,7 +10,7 @@ function wpcsc_plugin_action_links($links, $file) {
         $wpcsc_plugin = plugin_basename(__FILE__);
     }
     if ($file == $wpcsc_plugin) {
-        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=csc-plugin-settings">Settings</a>';
+        $settings_link = '<a href="' . get_bloginfo('wpurl') . '/wp-admin/admin.php?page=wpcsc-plugin-settings">Settings</a>';
         array_unshift($links, $settings_link);
     }
     return $links;

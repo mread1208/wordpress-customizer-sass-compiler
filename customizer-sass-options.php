@@ -24,7 +24,7 @@ class WpCscSettingsPage
             'Sass Compiler Settings', 
             'Customizer Sass Compiler Settings', 
             'manage_options', 
-            'csc-plugin-settings', 
+            'wpcsc-plugin-settings', 
             array($this, 'create_admin_page'),
             'dashicons-art'
         );
@@ -50,7 +50,7 @@ class WpCscSettingsPage
             <form method="post" action="options.php">
                 <?php // This prints out all setting fields
                     settings_fields('wpcsc1208_option_settings_group');
-                    do_settings_sections('csc-plugin-settings');
+                    do_settings_sections('wpcsc-plugin-settings');
                 ?>
                 
                 <?php // So we don't overwrite our version number in the DB ?>
@@ -123,14 +123,14 @@ class WpCscSettingsPage
             'wpcsc1208_styles_include_id', // ID
             'Default Stylesheets / JS / and SASS files to Include', // Title
             array( $this, 'csc_styles_includes_info' ), // Callback
-            'csc-plugin-settings' // Page
+            'wpcsc-plugin-settings' // Page
         );  
 
         add_settings_field(
             'bootstrap', // ID
             'Include Bootstrap', // Title 
             array( $this, 'bootstrap_callback' ), // Callback
-            'csc-plugin-settings', // Page
+            'wpcsc-plugin-settings', // Page
             'wpcsc1208_styles_include_id' // Section           
         );
         
@@ -138,7 +138,7 @@ class WpCscSettingsPage
             'custom', // ID
             'Include Custom Options', // Title 
             array( $this, 'custom_callback' ), // Callback
-            'csc-plugin-settings', // Page
+            'wpcsc-plugin-settings', // Page
             'wpcsc1208_styles_include_id' // Section           
         );
         
@@ -150,14 +150,14 @@ class WpCscSettingsPage
                 'csc_bootstrap_options_id', // ID
                 'Bootstrap SASS Variables to include', // Title
                 array( $this, 'csc_bootstrap_options_info' ), // Callback
-                'csc-plugin-settings' // Page
+                'wpcsc-plugin-settings' // Page
             );  
 
             add_settings_field(
                 'wpcsc_bootstrap_options', // ID
                 'Bootstrap Variables to include', // Title 
                 array( $this, 'bootstrap_options_callback' ), // Callback
-                'csc-plugin-settings', // Page
+                'wpcsc-plugin-settings', // Page
                 'csc_bootstrap_options_id' // Section           
             );
         }
@@ -168,14 +168,14 @@ class WpCscSettingsPage
                 'csc_custom_options_id', // ID
                 'Custom SASS file and Variables', // Title
                 array( $this, 'csc_custom_options_info' ), // Callback
-                'csc-plugin-settings' // Page
+                'wpcsc-plugin-settings' // Page
             );  
 
             add_settings_field(
                 'wpcsc_custom_sass_file', // ID
                 'Path to Custom Sass File (exclude file name)', // Title 
                 array( $this, 'custom_path_callback' ), // Callback
-                'csc-plugin-settings', // Page
+                'wpcsc-plugin-settings', // Page
                 'csc_custom_options_id' // Section           
             );
             
@@ -183,7 +183,7 @@ class WpCscSettingsPage
                 'wpcsc_custom_sass_file_name', // ID
                 'Name of Custom Sass File', // Title 
                 array( $this, 'custom_name_callback' ), // Callback
-                'csc-plugin-settings', // Page
+                'wpcsc-plugin-settings', // Page
                 'csc_custom_options_id' // Section           
             );
             
@@ -191,7 +191,7 @@ class WpCscSettingsPage
                 'wpcsc_custom_options', // ID
                 'Custom Variables to include', // Title 
                 array( $this, 'custom_options_callback' ), // Callback
-                'csc-plugin-settings', // Page
+                'wpcsc-plugin-settings', // Page
                 'csc_custom_options_id' // Section           
             );
         }

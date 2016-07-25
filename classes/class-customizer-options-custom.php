@@ -36,7 +36,7 @@ class WpCscCustomCustomizerOptions extends WpCscCustomizerOptions
         
             $wp_customize->add_panel( 'wpcsc1208_custom_options_panel', array(
                     'title'       => __('Custom Sass Options', 'wpcsc1208'),
-                    'description' => __('Modify your custom variabels set in the Sass Compiler settings', 'wpcsc1208'),
+                    'description' => __('Modify your custom variables set in the Sass Compiler settings', 'wpcsc1208'),
                     'priority'    => 10,
                 )
             );
